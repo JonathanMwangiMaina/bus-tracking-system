@@ -9,7 +9,7 @@ import java.util.concurrent.*;
 
 public class TrackingServer {
     private static final int PORT = 7070;
-    private static final int THREAD_POOL_SIZE = 50;
+    private static final int THREAD_POOL_SIZE = 20;
     
     private ServerSocket serverSocket;
     private ExecutorService threadPool;
