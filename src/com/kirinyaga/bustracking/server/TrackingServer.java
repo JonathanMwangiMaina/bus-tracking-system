@@ -8,8 +8,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class TrackingServer {
-    private static final int PORT = 7070;
-    private static final int THREAD_POOL_SIZE = 20;
+    private final int PORT = 7070;
+    private static final int THREAD_POOL_SIZE = 50;
     
     private ServerSocket serverSocket;
     private ExecutorService threadPool;
@@ -18,7 +18,8 @@ public class TrackingServer {
     private ConcurrentHashMap<String, ClientHandler> connectedClients;
     private volatile boolean running;
     
-    public TrackingServer() {
+    public TrackingServer(int port) {
+        this.port = port;
         this.threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
         this.busPositions = new ConcurrentHashMap<>();
         this.stopSubscribers = new ConcurrentHashMap<>();
@@ -27,9 +28,9 @@ public class TrackingServer {
     }
     
     public void start() throws IOException {
-        serverSocket = new ServerSocket(PORT);
+        serverSocket = new ServerSocket(port);
         running = true;
-        System.out.println("Tracking Server started on port " + PORT);
+        System.out.println("Tracking Server started on port " + port);
         
         // Start broadcast thread
         threadPool.execute(this::broadcastUpdates);
