@@ -1,0 +1,96 @@
+[
+  {
+    "routeId": "ROUTE-001",
+    "routeName": "Main Campus - Town",
+    "color": "RED",
+    "stops": [
+      {
+        "stopId": "STOP-001",
+        "stopName": "Main Gate",
+        "latitude": -0.5236,
+        "longitude": 37.2661
+      },
+      {
+        "stopId": "STOP-002",
+        "stopName": "Library Junction",
+        "latitude": -0.5240,
+        "longitude": 37.2670,
+        "distanceFromPrevious": 1.2,
+        "travelTimeFromPrevious": 5
+      },
+      {
+        "stopId": "STOP-003",
+        "stopName": "Town Center",
+        "latitude": -0.5250,
+        "longitude": 37.2690,
+        "distanceFromPrevious": 2.5,
+        "travelTimeFromPrevious": 8
+      }
+    ],
+    "schedule": {
+      "firstBusTime": "06:00:00",
+      "lastBusTime": "22:00:00",
+      "frequencyMinutes": 30
+    }
+  },
+  {
+    "routeId": "ROUTE-002",
+    "routeName": "Campus - Hostels",
+    "color": "BLUE",
+    "stops": [
+      {
+        "stopId": "STOP-001",
+        "stopName": "Main Gate",
+        "latitude": -0.5236,
+        "longitude": 37.2661
+      },
+      {
+        "stopId": "STOP-004",
+        "stopName": "Hostel A",
+        "latitude": -0.5220,
+        "longitude": 37.2640,
+        "distanceFromPrevious": 2.0,
+        "travelTimeFromPrevious": 6
+      },
+      {
+        "stopId": "STOP-005",
+        "stopName": "Hostel B",
+        "latitude": -0.5210,
+        "longitude": 37.2620,
+        "distanceFromPrevious": 2.5,
+        "travelTimeFromPrevious": 7
+      }
+    ],
+    "schedule": {
+      "firstBusTime": "06:30:00",
+      "lastBusTime": "23:00:00",
+      "frequencyMinutes": 25
+    }
+  },
+  {
+    "routeId": "ROUTE-003",
+    "routeName": "Campus - Shopping Centre",
+    "color": "GREEN",
+    "stops": [
+      {
+        "stopId": "STOP-001",
+        "stopName": "Main Gate",
+        "latitude": -0.5236,
+        "longitude": 37.2661
+      },
+      {
+        "stopId": "STOP-006",
+        "stopName": "Shopping Centre",
+        "latitude": -0.5260,
+        "longitude": 37.2710,
+        "distanceFromPrevious": 3.5,
+        "travelTimeFromPrevious": 10
+      }
+    ],
+    "schedule": {
+      "firstBusTime": "07:00:00",
+      "lastBusTime": "21:00:00",
+      "frequencyMinutes": 40
+    }
+  }
+]
