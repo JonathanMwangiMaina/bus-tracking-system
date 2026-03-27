@@ -36,7 +36,7 @@ public class BusTrackingSystemLauncher {
             }).start();
 
             // Start REST API server
-            int apiPort = Integer.parseInt(System.getenv().getOrDefault("API_PORT", "8080"));
+            int apiPort = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
             apiServer = new RestApiServer(apiPort);
             new Thread(() -> {
                 try {
