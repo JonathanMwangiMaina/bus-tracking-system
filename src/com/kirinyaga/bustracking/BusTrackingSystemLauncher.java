@@ -26,6 +26,7 @@ public class BusTrackingSystemLauncher {
             System.out.println("Loaded " + routes.size() + " routes");
 
             // Start tracking server
+            int trackingPort = Integer.parseInt(System.getenv().getOrDefault("TRACKING_PORT", "7070"));
             trackingServer = new TrackingServer();
             new Thread(() -> {
                 try {
