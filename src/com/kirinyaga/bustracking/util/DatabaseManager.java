@@ -17,6 +17,8 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+            stmt.execute("INSERT OR IGNORE INTO students VALUES ('admin', 'admin123', 'ADMIN')");
+            stmt.execute("INSERT OR IGNORE INTO students VALUES ('student1', 'pass123', 'STUDENT')");
     }
 
     public static Connection getConnection() throws SQLException {
