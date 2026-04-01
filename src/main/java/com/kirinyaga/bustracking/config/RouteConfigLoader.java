@@ -1,28 +1,40 @@
-// RouteConfigLoader.java
 package com.kirinyaga.bustracking.config;
 
 import com.kirinyaga.bustracking.models.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RouteConfigLoader {
-    private static final String ROUTES_FILE = "data/routes.json";
+    // Note: The leading slash indicates the root of the resources folder
+    private static final String ROUTES_RESOURCE = "/data/routes.json";
     
     public static List<Route> loadRoutes() throws IOException {
         List<Route> routes = new ArrayList<>();
         
-        String content = new String(Files.readAllBytes(Paths.get(ROUTES_FILE)));
-        JSONArray routesArray = new JSONArray(content);
-        
-        for (int i = 0; i < routesArray.length(); i++) {
-            JSONObject routeObj = routesArray.getJSONObject(i);
-            Route route = parseRoute(routeObj);
-            routes.add(route);
+        // Use getResourceAsStream to find the file inside the JAR/classpath
+        try (InputStream is = RouteConfigLoader.class.getResourceAsStream(ROUTES_RESOURCE)) {
+            if (is == null) {
+                throw new FileNotFoundException("Could not find resource: " + ROUTES_RESOURCE + 
+                    ". Ensure the file is located at src/main/resources/data/routes.json");
+            }
+
+            // Convert InputStream to String
+            String content;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                content = reader.lines().collect(Collectors.joining("\n"));
+            }
+
+            JSONArray routesArray = new JSONArray(content);
+            for (int i = 0; i < routesArray.length(); i++) {
+                JSONObject routeObj = routesArray.getJSONObject(i);
+                Route route = parseRoute(routeObj);
+                routes.add(route);
+            }
         }
         
         return routes;
@@ -35,7 +47,6 @@ public class RouteConfigLoader {
         
         Route route = new Route(routeId, routeName, color);
         
-        // Parse stops
         JSONArray stopsArray = routeObj.getJSONArray("stops");
         for (int i = 0; i < stopsArray.length(); i++) {
             JSONObject stopObj = stopsArray.getJSONObject(i);
@@ -52,7 +63,6 @@ public class RouteConfigLoader {
             route.addStop(stop, distance, travelTime);
         }
         
-        // Parse schedule
         JSONObject scheduleObj = routeObj.getJSONObject("schedule");
         Schedule schedule = new Schedule(
             LocalTime.parse(scheduleObj.getString("firstBusTime")),
@@ -64,7 +74,12 @@ public class RouteConfigLoader {
         return route;
     }
     
-    public static void saveRoutes(List<Route> routes) throws IOException {
+    /**
+     * NOTE: Writing to resources at runtime is not possible in a packaged JAR.
+     * This method is retained for logic but will only work in a local development 
+     * environment with a writable file system.
+     */
+    public static void saveRoutes(List<Route> routes, String exportPath) throws IOException {
         JSONArray routesArray = new JSONArray();
         
         for (Route route : routes) {
@@ -105,6 +120,8 @@ public class RouteConfigLoader {
             routesArray.put(routeObj);
         }
         
-        Files.write(Paths.get(ROUTES_FILE), routesArray.toString(2).getBytes());
+        try (FileWriter writer = new FileWriter(exportPath)) {
+            writer.write(routesArray.toString(2));
+        }
     }
 }
