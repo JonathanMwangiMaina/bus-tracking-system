@@ -41,10 +41,10 @@ public class BusTrackingSystemLauncher {
             apiServer = new RestApiServer(apiPort);
             new Thread(() -> {
                 try {
-                    apiServer.start();
-                } catch (IOException e) {
-                    System.err.println("Failed to start API server: " + e.getMessage());
-                }
+                        apiServer.start();
+                    } catch (Exception e) { 
+                            System.err.println("Failed to start API server: " + e.getMessage());
+                                          }
             }).start();
 
             // Wait for servers to start
