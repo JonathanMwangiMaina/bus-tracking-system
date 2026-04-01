@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kirinyaga Bus Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: sans-serif; margin: 0; display: flex; height: 100vh; }
+        #sidebar { width: 300px; background: #2c3e50; color: white; padding: 20px; }
+        #map { flex: 1; }
+        .bus-card { background: #34495e; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        button { cursor: pointer; background: #27ae60; border: none; color: white; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Bus Dashboard</h2>
+        <div id="bus-list">Loading buses...</div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([-0.514, 37.281], 15);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        let markers = {};
+
+        function updateData() {
+            fetch('/api/buses')
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('bus-list');
+                    list.innerHTML = '';
+                    data.forEach(bus => {
+                        // Update List
+                        list.innerHTML += `
+                            <div class="bus-card">
+                                <strong>${bus.busId}</strong><br>
+                                Passengers: ${bus.passengers}<br>
+                                <button onclick="checkIn('${bus.busId}', 'increment')">+</button>
+                                <button onclick="checkIn('${bus.busId}', 'decrement')">-</button>
+                            </div>`;
+                        
+                        // Update Map
+                        if (markers[bus.busId]) {
+                            markers[bus.busId].setLatLng([bus.lat, bus.lng]);
+                        } else {
+                            markers[bus.busId] = L.marker([bus.lat, bus.lng]).addTo(map).bindPopup(bus.busId);
+                        }
+                    });
+                });
+        }
+
+        function checkIn(id, action) {
+            fetch(`/api/buses?busId=${id}&action=${action}`, { method: 'POST' })
+                .then(() => updateData());
+        }
+
+        setInterval(updateData, 2000);
+        updateData();
+    </script>
+</body>
+</html>
