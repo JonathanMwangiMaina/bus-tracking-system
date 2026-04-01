@@ -335,33 +335,31 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Railway production profile -->     
+        <profile>
+            <id>production</id>
+            <activation>
+                <property>
+                    <name>env.RAILWAY_ENVIRONMENT</name>
+                </property>
+            </activation>
+            <properties>
+                <db.path>/app/data/bus_tracking.db</db.path>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>true</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>     
     </profiles>
-    <profile>
-    <id>production</id>
-    <activation>
-        <!-- This profile activates automatically when on Railway -->
-        <property>
-            <name>env.RAILWAY_ENVIRONMENT</name>
-        </property>
-    </activation>
-    <properties>
-        <!-- Production-specific settings -->
-        <db.path>/app/data/bus_tracking.db</db.path>
-        <log.level>INFO</log.level>
-    </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- Skip tests in production for faster deployment -->
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</profile>
 
     <!-- Distribution Management (for releases) -->
     <distributionManagement>
