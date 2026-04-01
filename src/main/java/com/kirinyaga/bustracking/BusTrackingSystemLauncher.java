@@ -18,10 +18,9 @@ public class BusTrackingSystemLauncher {
     private static TrackingServer trackingServer;
     private static BusSimulationEngine simulationEngine;
     private static RestApiServer apiServer;
-
-    public static void main(String[] args) {
-        try {
-            // Load routes
+    
+    public static void main(String[] args) throws Exception{
+                // Load routes
             List<Route> routes = RouteConfigLoader.loadRoutes();
             System.out.println("Loaded " + routes.size() + " routes");
 
