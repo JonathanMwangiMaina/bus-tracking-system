@@ -121,7 +121,7 @@ public class TrackingServer {
     }
     
     public static void main(String[] args) {
-        TrackingServer server = new TrackingServer();
+        TrackingServer server = new TrackingServer(8080);
         try {
             server.start();
         } catch (IOException e) {
