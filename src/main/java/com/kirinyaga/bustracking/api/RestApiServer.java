@@ -21,18 +21,31 @@ public class RestApiServer {
         context.setContextPath("/");
         server.setHandler(context);
 
-        // 2. Register Routes
+        // 2. Register API Routes
         context.addServlet(new ServletHolder(new HealthCheckServlet()), "/health");
         context.addServlet(new ServletHolder(new BusServlet()), "/api/buses/*");
         context.addServlet(new ServletHolder(new AuthServlet()), "/api/login");
 
-        // 3. Start the Web Server FIRST
-        // This ensures the /health endpoint is live immediately
+        // 3. Register Static Resources (index.html as landing page)
+        java.net.URL resourceUrl = RestApiServer.class.getClassLoader().getResource("index.html");
+        if (resourceUrl != null) {
+            String webRootPath = resourceUrl.toExternalForm().replace("index.html", "");
+            context.setResourceBase(webRootPath);
+
+            ServletHolder staticHolder = new ServletHolder("default", org.eclipse.jetty.servlet.DefaultServlet.class);
+            staticHolder.setInitParameter("dirAllowed", "false"); 
+            staticHolder.setInitParameter("welcomeServlets", "true");
+            
+            context.addServlet(staticHolder, "/");
+        } else {
+            System.err.println("Warning: index.html not found in 1 resource directory.");
+        }
+
+        // 4. Start the Web Server FIRST
         server.start();
         System.out.println("Jetty Server successfully started and listening on port: " + port);
 
-        // 4. Start Simulation in a BACKGROUND THREAD
-        // This prevents the simulation from blocking the web server
+        // 5. Start Simulation in a BACKGROUND THREAD
         Thread simulationThread = new Thread(() -> {
             try {
                 System.out.println("Starting background GPS Simulation...");
@@ -42,11 +55,10 @@ public class RestApiServer {
                 e.printStackTrace();
             }
         });
-        simulationThread.setDaemon(false); // Ensure simulation keeps JVM alive if needed
+        simulationThread.setDaemon(false); 
         simulationThread.start();
 
-        // 5. Join the server to the main thread
-        // This keeps the process running and responsive to Jetty events
+        // 6. Join the server to the main thread
         server.join();
     }
 
