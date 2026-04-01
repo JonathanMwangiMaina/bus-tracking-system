@@ -4,7 +4,7 @@ package com.kirinyaga.bustracking;
 import com.kirinyaga.bustracking.config.RouteConfigLoader;
 import com.kirinyaga.bustracking.models.*;
 import com.kirinyaga.bustracking.server.TrackingServer;
-import com.kirinyaga.bustracking.server.RestApiServer;
+import com.kirinyaga.bustracking.api.RestApiServer;
 import com.kirinyaga.bustracking.simulation.BusSimulationEngine;
 import com.kirinyaga.bustracking.ui.control.ControlCenterApp;
 import com.kirinyaga.bustracking.ui.driver.DriverApp;
