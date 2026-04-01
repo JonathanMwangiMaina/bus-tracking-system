@@ -3,7 +3,7 @@ package com.kirinyaga.bustracking.util;
 import java.sql.*;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:sqlite:bus_tracking.db";
+    private static final String URL = "jdbc:sqlite:/app/data/bus_tracking.db";
 
     static {
         try (Connection conn = DriverManager.getConnection(URL)) {
