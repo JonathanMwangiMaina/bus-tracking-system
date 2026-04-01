@@ -3,53 +3,56 @@ package com.kirinyaga.bustracking.api;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kirinyaga.bustracking.service.GPSDataSimulator;
 
 public class RestApiServer {
     private Server server;
-    private int port;
+    private final int port;
 
     public RestApiServer(int port) {
         this.port = port;
     }
 
     public void start() throws Exception {
-        // Initialize Jetty Server on the assigned Railway PORT
+        // 1. Initialize Server
         server = new Server(port);
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
-        // --- NEW: REGISTRATION OF THE /health ROUTE ---
-        // This must match the 'Healthcheck Path' in your Railway Settings
+        // 2. Register Routes
         context.addServlet(new ServletHolder(new HealthCheckServlet()), "/health");
-
-        // Existing Servlets
         context.addServlet(new ServletHolder(new BusServlet()), "/api/buses/*");
         context.addServlet(new ServletHolder(new AuthServlet()), "/api/login");
 
-        // --- VERIFICATION: NON-BLOCKING STARTUP ---
-        // We start the simulation BEFORE the blocking server.join() call
-        // but AFTER setting up handlers to ensure we don't hang the thread.
-        try {
-            GPSDataSimulator.startSimulation();
-            System.out.println("GPS Simulation started successfully.");
-        } catch (Exception e) {
-            System.err.println("Warning: GPS Simulation failed to start: " + e.getMessage());
-            // We continue starting the server anyway so the Healthcheck doesn't fail
-        }
-
+        // 3. Start the Web Server FIRST
+        // This ensures the /health endpoint is live immediately
         server.start();
-        System.out.println("Jetty Server started on port " + port);
-        
-        // Use server.join() if you want the main thread to hang here 
-        // until the server is stopped, preventing the JVM from exiting.
-        // server.join(); 
+        System.out.println("Jetty Server successfully started and listening on port: " + port);
+
+        // 4. Start Simulation in a BACKGROUND THREAD
+        // This prevents the simulation from blocking the web server
+        Thread simulationThread = new Thread(() -> {
+            try {
+                System.out.println("Starting background GPS Simulation...");
+                GPSDataSimulator.startSimulation();
+            } catch (Exception e) {
+                System.err.println("Critical Error in GPS Simulation: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
+        simulationThread.setDaemon(false); // Ensure simulation keeps JVM alive if needed
+        simulationThread.start();
+
+        // 5. Join the server to the main thread
+        // This keeps the process running and responsive to Jetty events
+        server.join();
     }
 
     public void stop() throws Exception {
-        if (server != null) server.stop();
+        if (server != null) {
+            server.stop();
+        }
     }
 }
