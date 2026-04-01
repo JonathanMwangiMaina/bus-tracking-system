@@ -27,7 +27,7 @@ public class BusTrackingSystemLauncher {
 
             // Start tracking server
             int trackingPort = Integer.parseInt(System.getenv().getOrDefault("TRACKING_PORT", "7070"));
-            trackingServer = new TrackingServer();
+            trackingServer = new TrackingServer(trackingPort);
             new Thread(() -> {
                 try {
                     trackingServer.start();
